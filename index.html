@@ -120,7 +120,14 @@ h1 {
 @media (max-width: 800px)  { .pet-grid { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 500px)  { 
   .pet-grid { grid-template-columns: repeat(2, 1fr); } 
-  .pet-card { max-width: 180px; margin-left: -8px; } 
+  .pet-card { 
+    max-width: 180px; 
+    margin-left: -8px; 
+    aspect-ratio: auto !important;
+  }
+  .pet-image-wrap {
+    aspect-ratio: 1 / 1.2 !important;
+  }
   .pet-banner { 
     font-size: 8px !important; 
     padding: 6px 9px !important; 
@@ -771,7 +778,7 @@ h1 {
 
 <div class="wrapper">
 
-  <img src="SVG/petboops.svg" alt="Pet Boops" style="height: auto; max-width: 400px; display: block; margin: 12 auto 40px; justify-self: center; padding-bottom: 2px;">
+  <img src="SVG/PetBoops.svg" alt="Pet Boops" style="height: auto; max-width: 400px; display: block; margin: 12 auto 40px; justify-self: center; padding-bottom: 2px;">
       <div class="subtitle">Click on a pet's nose to raise their Boop count. <br>
         Whoever has the highest Boops at the end of the month <br> gets a place in the Hall of Fame.</div>
   <div class="title-controls">
