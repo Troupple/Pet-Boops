@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hall of Fame | Pet Boops</title>
+<link id="favicon" rel="icon" type="image/svg+xml" href="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f5f0;
+  --text: #111111;
+  --line: #111111;
+  --yellow: #facc15;
+  --pink: #f472b6;
+  --blue: #3b82f6;
+  --shadow: 6px 6px 0 var(--line);
+  --shadow-lg: 8px 8px 0 var(--line);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  min-height: 100vh;
+}
+
+.wrapper {
+  width: min(900px, 94%);
+  margin: auto;
+  padding: 40px 0 80px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.nav-back {
+  border: 3px solid var(--line);
+  background: white;
+  padding: 10px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.nav-back:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-lg); }
+.nav-back:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--line); }
+
+.nav-label {
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.35;
+}
+
+.page-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 70px;
+  padding-top: 40px;
+  border-top: 3px solid var(--line);
+  font-size: 13px;
+  letter-spacing: 1px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: var(--text);
+  border: 3px solid var(--line);
+  background: var(--yellow);
+  padding: 8px 16px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.footer-link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.footer-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.footer-separator {
+  opacity: 0.2;
+}
+
+h1 {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 700;
+  letter-spacing: -6px;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.page-sub {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.4;
+  margin-bottom: 56px;
+}
+
+.month-block {
+  margin-bottom: 32px;
+}
+
+.month-header {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 14px;
+  border-bottom: 3px solid var(--line);
+  padding-bottom: 10px;
+}
+
+.month-label {
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+
+.month-year {
+  font-size: 12px;
+  opacity: 0.35;
+  letter-spacing: 2px;
+}
+
+.winner-card {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow);
+  background: white;
+  overflow: visible;
+  position: relative;
+}
+
+.winner-card.gold { background: var(--yellow); }
+
+.winner-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.05) saturate(1.1);
+  border-right: 3px solid var(--line);
+}
+
+.winner-info {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.winner-name {
+  font-size: clamp(22px, 4vw, 36px);
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+}
+
+.winner-stat {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.winner-stat strong {
+  opacity: 1;
+  color: var(--text);
+}
+
+.pet-banner {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: var(--blue);
+  color: black;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 5;
+  transition: transform 0.08s ease;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  border: 3px solid var(--line);
+}
+
+.pet-banner:hover {
+  transform: translate(-2px, -2px);
+}
+
+.pet-banner:active {
+  transform: translate(2px, 2px);
+}
+
+.pet-banner.adopted {
+  background: var(--pink);
+  cursor: default;
+  pointer-events: none;
+}
+
+.pet-banner img {
+  width: 14px;
+  height: 14px;
+  filter: brightness(0);
+}
+
+.current-block {
+  border: 3px dashed var(--line);
+  padding: 32px 28px;
+  text-align: center;
+  opacity: 0.35;
+  margin-bottom: 32px;
+}
+
+.current-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.current-desc {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 500px) {
+  .winner-card { grid-template-columns: 90px 1fr; }
+  .winner-img { width: 90px; height: 90px; }
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="nav">
+    <a class="nav-back" href="index.html">← Back</a>
+    <span class="nav-label">Pet Boops</span>
+  </div>
+
+  <h1>Hall of Fame</h1>
+  <p class="page-sub">monthly boop champions</p>
+
+  <div id="hofContent"></div>
+
+  <div class="page-footer">
+    <a href="https://jambles.fun" class="footer-link">Jambles.fun</a>
+    <span class="footer-separator">|</span>
+    <a href="mailto:Hi@jambles.fun" class="footer-link">Support</a>
+    <span class="footer-separator">|</span>
+    <a href="mailto:Bugs@jambles.fun" class="footer-link">Report a Bug</a>
+  </div>
+
+</div>
+<script>
+
+const container = document.getElementById("hofContent");
+
+function trimTransparentBorders(img) {
+  const threshold = 10;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  const width = img.naturalWidth;
+  const height = img.naturalHeight;
+  if (!width || !height) return img.src;
+
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(img, 0, 0, width, height);
+  const pixels = ctx.getImageData(0, 0, width, height).data;
+
+  let minX = width, minY = height, maxX = 0, maxY = 0, found = false;
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const a = pixels[(y * width + x) * 4 + 3];
+      if (a > threshold) { found = true; minX = Math.min(minX, x); minY = Math.min(minY, y); maxX = Math.max(maxX, x); maxY = Math.max(maxY, y); }
+    }
+  }
+  if (!found) return img.src;
+  if (minX === 0 && minY === 0 && maxX === width - 1 && maxY === height - 1) return img.src;
+
+  const cropW = maxX - minX + 1;
+  const cropH = maxY - minY + 1;
+  const out = document.createElement('canvas');
+  out.width = cropW; out.height = cropH;
+  const outCtx = out.getContext('2d');
+  outCtx.drawImage(canvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+  return out.toDataURL();
+}
+
+function renderHallOfFame(entries) {
+  const sorted = [...entries].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  sorted.forEach((entry, index) => {
+    const parts = String(entry.date || '').split('-').map(Number);
+    const date = parts.length >= 3 ? new Date(parts[0], parts[1] - 1, parts[2]) : new Date(entry.date);
+    const month = date.toLocaleString("default", { month: "long" });
+    const year = date.getFullYear();
+
+    if (!entry["month-complete"]) {
+      const curr = document.createElement("div");
+      curr.className = "current-block";
+      curr.innerHTML = `
+        <div class="current-label">Current Month</div>
+        <div class="current-desc">${month} ${year} | in progress</div>
+      `;
+      container.appendChild(curr);
+      return;
+    }
+
+    const block = document.createElement("div");
+    block.className = "month-block";
+
+    let bannerHTML = '';
+    if (entry.adoptable) {
+      bannerHTML = `<a class="pet-banner" href="${entry.adoptable.link}" target="_blank">Adopt Me! <img src="SVG/arrow-up-right.svg" alt=""></a>`;
+    } else if (entry.adopted) {
+      bannerHTML = `<div class="pet-banner adopted">Adopted</div>`;
+    }
+
+    block.innerHTML = `
+      <div class="month-header">
+        <span class="month-label">${month}</span>
+        <span class="month-year">${year}</span>
+      </div>
+      <div class="winner-card${index === 0 ? " gold" : ""}">
+        <img class="winner-img" src="${entry["pet-img"]}" alt="${entry["pet-name"]}" loading="lazy">
+        <div class="winner-info">
+          <div class="winner-name">${entry["pet-name"]}</div>
+          <div class="winner-stat"><strong>Winner</strong> of the month</div>
+        </div>
+        ${bannerHTML}
+      </div>
+    `;
+
+    container.appendChild(block);
+    // trim transparent borders of the image after load
+    const imgEl = block.querySelector('.winner-img');
+    if (imgEl) {
+      imgEl.addEventListener('load', () => {
+        if (imgEl.dataset.trimmed) return;
+        try {
+          const trimmed = trimTransparentBorders(imgEl);
+          if (trimmed && trimmed !== imgEl.src) {
+            imgEl.dataset.trimmed = '1';
+            imgEl.src = trimmed;
+          }
+        } catch (e) { /* ignore */ }
+      });
+    }
+  });
+}
+
+async function loadHallOfFame() {
+  try {
+    const response = await fetch(`hall-of-fame.json?t=${Date.now()}`, { cache: "reload" });
+    if (!response.ok) throw new Error("Failed to load hall-of-fame.json");
+    const data = await response.json();
+    renderHallOfFame(data);
+  } catch (error) {
+    container.innerHTML = `
+      <div class="current-block">
+        <div class="current-label">No Data</div>
+        <div class="current-desc">Hall of Fame data not available</div>
+      </div>
+    `;
+    console.warn("Failed to load data:", error);
+  }
+}
+
+loadHallOfFame();
+
+// Randomly select a favicon on page load
+const favicons = ['favicon1.svg', 'favicon2.svg', 'favicon3.svg'];
+const randomFavicon = favicons[Math.floor(Math.random() * favicons.length)];
+document.getElementById('favicon').href = `SVG/${randomFavicon}`;
+</script>
+</body>
+</html>

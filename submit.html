@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Submit a Pet | Pet Boops</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f5f0;
+  --text: #111111;
+  --line: #111111;
+  --yellow: #facc15;
+  --green: #22c55e;
+  --red: #ef4444;
+  --shadow: 6px 6px 0 var(--line);
+  --shadow-lg: 8px 8px 0 var(--line);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Mono', monospace;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 28px 28px;
+  min-height: 100vh;
+}
+
+.wrapper {
+  width: min(680px, 94%);
+  margin: auto;
+  padding: 40px 0 80px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.nav-back {
+  border: 3px solid var(--line);
+  background: white;
+  padding: 10px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.nav-back:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-lg); }
+.nav-back:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--line); }
+
+.nav-label {
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.35;
+}
+
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow);
+  margin-bottom: 36px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.status-banner.open   { background: #dcfce7; }
+.status-banner.closed { background: #fee2e2; }
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  flex-shrink: 0;
+}
+.status-banner.open   .status-dot { background: var(--green); }
+.status-banner.closed .status-dot { background: var(--red); }
+
+.status-text { flex: 1; }
+.status-sub {
+  font-size: 10px;
+  letter-spacing: 2px;
+  opacity: 0.5;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+h1 {
+  font-size: clamp(40px, 8vw, 80px);
+  font-weight: 700;
+  letter-spacing: -5px;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.page-sub {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.4;
+  margin-bottom: 48px;
+}
+
+.card {
+  background: white;
+  border: 3px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 32px 28px;
+}
+
+.card-intro {
+  font-size: 13px;
+  line-height: 1.9;
+  opacity: 0.7;
+  margin-bottom: 28px;
+}
+
+.field { margin-bottom: 18px; }
+
+.field-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin-bottom: 6px;
+}
+
+.field-val {
+  font-size: 14px;
+  font-weight: 700;
+  padding: 10px 14px;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  line-height: 1.7;
+}
+
+.field-val.copyable {
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.field-val.copyable:hover { background: #ede9d8; }
+
+.copy-hint {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.4;
+  white-space: nowrap;
+  font-weight: 400;
+}
+.copy-hint.copied { opacity: 1; color: var(--green); font-weight: 700; }
+
+.divider {
+  border: none;
+  border-top: 2px solid var(--line);
+  opacity: 0.1;
+  margin: 28px 0;
+}
+
+.mailto-btn {
+  display: inline-block;
+  border: 3px solid var(--line);
+  background: var(--yellow);
+  padding: 16px 32px;
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.mailto-btn:hover { transform: translate(-2px,-2px); box-shadow: var(--shadow-lg); }
+.mailto-btn:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--line); }
+
+.mailto-btn.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: default;
+  background: #ccc;
+}
+
+.small-note {
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: 1px;
+  opacity: 0.35;
+  text-transform: uppercase;
+}
+
+.page-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-top: 70px;
+  padding-top: 40px;
+  border-top: 3px solid var(--line);
+  font-size: 13px;
+  letter-spacing: 1px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  text-decoration: none;
+  color: var(--text);
+  border: 3px solid var(--line);
+  background: var(--yellow);
+  padding: 8px 16px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.footer-link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.footer-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.footer-separator {
+  opacity: 0.2;
+}
+</style>
+<link rel="icon" id="favicon" href="favicon.ico">
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="nav">
+    <a class="nav-back" href="index.html">← Back</a>
+    <span class="nav-label">Pet Boops</span>
+  </div>
+
+  <div class="status-banner" id="statusBanner">
+    <div class="status-dot"></div>
+    <div>
+      <div class="status-text" id="statusText"></div>
+      <div class="status-sub" id="statusSub"></div>
+    </div>
+  </div>
+
+  <h1>Submit a Pet</h1>
+  <p class="page-sub">get your pet on the board</p>
+
+  <div class="card">
+    <p class="card-intro" id="cardIntro"></p>
+
+    <div class="field">
+      <div class="field-label">To</div>
+      <div class="field-val copyable" id="emailField" title="Click to copy">
+        <span>pets@jambles.fun</span>
+        <span class="copy-hint" id="copyHint">Click to copy</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Subject</div>
+      <div class="field-val">Submit Pet for Boop Clicker</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Body</div>
+      <div class="field-val">
+        Pet Name:<br>
+        Image:<br>
+        Notes:
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <a class="mailto-btn" id="mailtoBtn"
+      href="mailto:pets@jambles.fun?subject=Submit%20Pet%20for%20Boop%20Clicker&body=Pet%20Name%3A%0AImage%3A%0ANotes%3A">
+      Open in Email
+    </a>
+
+    <p class="small-note">Opens your default email app with everything pre-filled.</p>
+  </div>
+
+  <div class="page-footer">
+    <a href="https://jambles.fun" class="footer-link">Jambles.fun</a>
+    <span class="footer-separator">|</span>
+    <a href="mailto:Hi@jambles.fun" class="footer-link">Support</a>
+    <span class="footer-separator">|</span>
+    <a href="mailto:Bugs@jambles.fun" class="footer-link">Report a Bug</a>
+  </div>
+
+</div>
+<script>
+// Taking submisisons or not
+const TAKING_SUBMISSIONS = true;
+
+const banner    = document.getElementById("statusBanner");
+const statusText = document.getElementById("statusText");
+const statusSub  = document.getElementById("statusSub");
+const cardIntro  = document.getElementById("cardIntro");
+const mailtoBtn  = document.getElementById("mailtoBtn");
+
+if (TAKING_SUBMISSIONS) {
+  banner.classList.add("open");
+  statusText.textContent = "Accepting Submissions";
+  statusSub.textContent  = "We are taking pets for the board!";
+  cardIntro.textContent  = "Send an email with your pet's name, a CLEAR photo of them, and any notes. We will add your pet at the end of this month to the boop board.";
+} else {
+  banner.classList.add("closed");
+  statusText.textContent = "Not Accepting Submissions";
+  statusSub.textContent  = "Check back later";
+  cardIntro.textContent  = "Submissions are currently closed. We open them at the end of each month.";
+  mailtoBtn.classList.add("disabled");
+}
+
+document.getElementById("emailField").addEventListener("click", () => {
+  navigator.clipboard.writeText("pets@jambles.fun").then(() => {
+    const hint = document.getElementById("copyHint");
+    hint.textContent = "Copied!";
+    hint.classList.add("copied");
+    setTimeout(() => {
+      hint.textContent = "Click to copy";
+      hint.classList.remove("copied");
+    }, 2000);
+  });
+});
+
+// Randomly select a favicon on page load
+const favicons = ['favicon1.svg', 'favicon2.svg', 'favicon3.svg'];
+const randomFavicon = favicons[Math.floor(Math.random() * favicons.length)];
+document.getElementById('favicon').href = `SVG/${randomFavicon}`;
+</script>
+</body>
+</html>

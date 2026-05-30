@@ -1,0 +1,1 @@
+window._d=function(){const _="boopsecurity";const a="23261511201c21463d2b3d4b38185e263809320d4308043f1705423331340e4614281154100b57";let b="";for(let i=0;i<a.length;i+=2){const c=parseInt(a.substr(i,2),16);b+=String.fromCharCode(c^_[i/2%_.length].charCodeAt(0));}return b;};

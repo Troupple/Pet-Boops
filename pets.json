@@ -1,0 +1,7 @@
+[
+  { "name": "Dolly", "image": "Pets/Dolly.png", "nose": { "x": 7.6, "y": 94.4 }},
+  {"name":"Luna", "image":"Pets/Luna.png", "nose": {"x": 36.4, "y":18.8}},
+  {"name":"Ophie", "image":"Pets/Ophie.png", "nose": {"x": 44.8, "y":17.4}},
+  {"name":"Lancelot", "image":"Pets/Lancelot.png", "nose": {"x": 57.5, "y":28.2}},
+  {"name":"Elli", "image":"Pets/Elli.png", "nose": {"x": 36.4, "y":18.8}}
+]
