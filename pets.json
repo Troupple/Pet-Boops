@@ -4,5 +4,8 @@
   {"name":"Ophie", "image":"Pets/Ophie.png", "nose": {"x": 44.8, "y":17.4}},
   {"name":"Lancelot", "image":"Pets/Lancelot.png", "nose": {"x": 57.5, "y":28.2}},
   {"name":"Elli", "image":"Pets/Elli.png", "nose": {"x": 24.6, "y":57.9}},
-  {"name":"Aspen", "image":"Pets/Aspen.png", "nose": {"x": 48.7, "y":60.2}}
+  {"name":"Aspen", "image":"Pets/Aspen.png", "nose": {"x": 48.7, "y":60.2}},
+  {"name":"Lola Bunny", "image":"Pets/Lola_Bunny.png", "nose": {"x": 46.1, "y":67.3}},
+  {"name":"Charlie", "image":"Pets/Charlie.png", "nose": {"x": 46.1, "y":24.7}},
+  {"name":"Cleaner Fishy", "image":"Pets/Cleaner_Fishy.png", "nose": {"x": 46.6, "y":21}}
 ]
