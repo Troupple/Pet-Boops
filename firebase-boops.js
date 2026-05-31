@@ -68,6 +68,10 @@ const BoopsSync = (() => {
       return false;
     }
 
+    if (window.acdLocked) {
+      return false;
+    }
+
     try {
       const petRef = window.firebaseDB.ref(`pets/${petName}`);
 

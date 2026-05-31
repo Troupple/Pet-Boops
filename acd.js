@@ -5,21 +5,6 @@ const TIERS = [
     "M 22,170 H 418 V 30 H 22",
   ],
   [
-    "M 22,170 L 152,30 L 282,170 L 418,30",
-    "M 22,100 C 140,20 300,180 418,100",
-    "M 22,170 H 140 V 30 H 280 V 170 H 418",
-  ],
-  [
-    "M 22,170 L 82,30 L 142,170 L 202,30 L 262,170 L 322,30 L 382,170 L 418,30",
-    "M 22,100 C 80,20 160,180 220,100 C 280,20 360,180 418,100",
-    "M 22,20 H 180 V 90 H 80 V 155 H 240 V 90 H 320 V 20 H 418",
-  ],
-  [
-    "M 22,170 V 30 H 82 V 170 H 142 V 30 H 202 V 170 H 262 V 30 H 322 V 170 H 382 V 30 H 418",
-    "M 22,170 H 90 V 110 H 55 V 60 H 140 V 110 H 210 V 50 H 290 V 110 H 360 V 50 H 418",
-    "M 22,170 C 60,30 180,30 220,100 C 260,170 380,170 418,30",
-  ],
-  [
     "M 22,170 V 30 H 62 V 170 H 102 V 30 H 142 V 170 H 182 V 30 H 222 V 170 H 262 V 30 H 302 V 170 H 342 V 30 H 382 V 170 H 418",
     "M 22,170 L 62,30 L 102,170 L 142,30 L 182,170 L 222,30 L 262,170 L 302,30 L 342,170 L 382,30 L 418,170",
     "M 22,20 H 120 V 170 H 60 V 90 H 180 V 20 H 280 V 170 H 200 V 90 H 320 V 20 H 418",
@@ -28,14 +13,11 @@ const TIERS = [
 
 const TIER_CONSTRAINTS = [
   [70, 42, 10],
-  [60, 36,  9],
-  [55, 30,  8],
-  [45, 24,  7],
   [35, 18,  6],
 ];
 
-const TIER_LABELS  = ['EASY','MODERATE','HARD','BRUTAL','NIGHTMARE'];
-const TIER_COLORS  = ['#22c55e','#eab308','#f97316','#ef4444','#dc2626'];
+const TIER_LABELS  = ['EASY','NIGHTMARE'];
+const TIER_COLORS  = ['#22c55e','#dc2626'];
 
 const MATH = [
   ()=>{
@@ -171,6 +153,7 @@ function acdShowCooldownScreen(until){
 
 let acdCwEl, acdWarnEl, acdMathBox, acdMathQ, acdMathInput, acdMathHint, acdMathAttemptEl, acdMathSubmit, acdSbEl, acdUhEl, acdReasonBadge, acdChallengeWrapper, acdCdScreen, acdCdTimer;
 let acdDetectionInterval;
+let acdDOMGuardInterval;
 
 function acdInitDOM(){
   acdCwEl=document.getElementById('cw');
@@ -230,11 +213,17 @@ function acdInitDOM(){
     const isSus=susRate>=SUSTAINED_CPS&&w3.length>=MIN_CLICKS;
 
     const flagged=is50||is100||isSus||sustainedConstantCPS;
-    if(flagged&&!acdChallengeUp&&!acdLocked)acdShowChallenge();
+    if(flagged&&!acdChallengeUp&&!acdLocked&&!acdCheckCooldown())acdShowChallenge();
   },200);
   
   acdMathSubmit.addEventListener('click',acdCheckMath);
   acdMathInput.addEventListener('keydown',e=>{if(e.key==='Enter')acdCheckMath();});
+  
+  acdDOMGuardInterval=setInterval(()=>{
+    if(!acdChallengeWrapper.parentNode){document.body.appendChild(acdChallengeWrapper);}
+    if(!acdCdScreen.parentNode){document.body.appendChild(acdCdScreen);}
+    if(acdLocked&&!acdChallengeWrapper.classList.contains('show')){acdChallengeWrapper.classList.add('show');}
+  },100);
 }
 
 if(document.readyState==='loading'){
@@ -290,7 +279,7 @@ function acdDisplayChallengeTier(tier){
 
   const [LOOKAHEAD,MAX_DIST,BACKTRACK]=TIER_CONSTRAINTS[tier];
 
-  if(tier===4){
+  if(tier===1){
     const coolUntil=acdRecordNightmare();
   }
 
