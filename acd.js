@@ -278,6 +278,7 @@ function acdShowChallengeFromState(tier){
 function acdDisplayChallengeTier(tier){
   acdChallengeUp=true;
   acdLocked=true;
+  acdDisableAllButtons(true);
   acdChallengeWrapper.classList.add('show');
   acdCwEl.classList.add('show');
   acdReasonBadge.classList.add('show');
@@ -447,9 +448,11 @@ function acdDisableAllButtons(disabled = true) {
   document.querySelectorAll('.nose-button').forEach(btn => {
     btn.disabled = disabled;
     if (disabled) {
+      btn.style.pointerEvents = 'none';
       btn.style.opacity = '0.5';
       btn.style.cursor = 'not-allowed';
     } else {
+      btn.style.pointerEvents = 'auto';
       btn.style.opacity = '0';
       btn.style.cursor = 'pointer';
     }
@@ -475,3 +478,4 @@ function acdDisableAllButtons(disabled = true) {
 window.acdTrackClick = acdTrackClick;
 window.acdDisableAllButtons = acdDisableAllButtons;
 window.acdCheckCooldown = acdCheckCooldown;
+window.acdIsBlocked = () => acdLocked || acdCheckCooldown();
