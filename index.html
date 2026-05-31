@@ -1140,6 +1140,10 @@ function renderPets() {
     updateBadge(card.querySelector(`[data-boop-name="${pet.name}"]`), pet.boops);
 
     noseBtn.addEventListener("click", async () => {
+      if (noseBtn.disabled || (window.acdIsBlocked && window.acdIsBlocked())) {
+        return;
+      }
+      
       window.acdTrackClick();
       try {
         boopSound.currentTime = 0;
