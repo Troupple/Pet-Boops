@@ -69,7 +69,8 @@ const MATH = [
 
 function acdRi(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 
-const WINDOW=3000, MIN_CLICKS=6, SUSTAINED_CPS=15, STD_THRESHOLD=18;
+const WINDOW=3000, MIN_CLICKS=6, SUSTAINED_CPS=15, STD_THRESHOLD=12;
+const CV_THRESHOLD=0.15;
 const INT_50=[45,55], INT_100=[95,105];
 const COOLDOWN_MS = 3 * 60 * 60 * 1000;
 const NIGHTMARE_LIMIT = 2;
@@ -83,11 +84,70 @@ let acdMoveHandler=null, acdUpHandler=null;
 let acdMathAnswer=null, acdMathAttempts=0;
 let acdActiveChallengeState=null;
 let acdCPSHistory=[], acdLastCPSCheckTime=0;
+let acdUserIP=null;
+let acdFirebaseReady=false;
 
 function acdGetStore(){
   try{return JSON.parse(localStorage.getItem('_acd')||'{}');}catch{return {};}
 }
 function acdSetStore(o){try{localStorage.setItem('_acd',JSON.stringify(o));}catch{}}
+
+async function acdGetUserIP(){
+  if(acdUserIP)return acdUserIP;
+  try{
+    const res=await fetch('https://api.ipify.org?format=json',{signal:AbortSignal.timeout(5000)});
+    const data=await res.json();
+    acdUserIP=data.ip;
+    return acdUserIP;
+  }catch{
+    return null;
+  }
+}
+
+function acdGetFirebaseKey(){
+  return 'acd_state_'+acdUserIP;
+}
+
+async function acdGetStoreFromFirebase(){
+  if(!acdFirebaseReady||!window.firebaseDB||!acdUserIP)return null;
+  try{
+    const ref=window.firebaseDB.ref(acdGetFirebaseKey());
+    const snapshot=await ref.get();
+    if(snapshot.exists()){
+      return snapshot.val();
+    }
+    return null;
+  }catch{
+    return null;
+  }
+}
+
+async function acdSetStoreToFirebase(o){
+  if(!acdFirebaseReady||!window.firebaseDB||!acdUserIP)return false;
+  try{
+    const ref=window.firebaseDB.ref(acdGetFirebaseKey());
+    o.lastUpdate=Date.now();
+    await ref.set(o);
+    return true;
+  }catch{
+    return false;
+  }
+}
+
+async function acdLoadSuspicionCountFromFirebase(){
+  const stored=await acdGetStoreFromFirebase();
+  if(stored){
+    acdSuspicionCount=stored.suspicionCount||0;
+    return true;
+  }
+  return false;
+}
+
+async function acdSaveSuspicionCountToFirebase(){
+  const stored=await acdGetStoreFromFirebase()||{};
+  stored.suspicionCount=acdSuspicionCount;
+  await acdSetStoreToFirebase(stored);
+}
 function acdLoadSuspicionCount(){
   const s=acdGetStore();
   acdSuspicionCount=s.suspicionCount||0;
@@ -96,11 +156,13 @@ function acdSaveSuspicionCount(){
   const s=acdGetStore();
   s.suspicionCount=acdSuspicionCount;
   acdSetStore(s);
+  if(acdFirebaseReady){acdSaveSuspicionCountToFirebase();}
 }
 function acdSaveActiveChallengeState(tier){
   const s=acdGetStore();
   s.activeChallengeState={tier:tier, timestamp:Date.now()};
   acdSetStore(s);
+  if(acdFirebaseReady){acdSetStoreToFirebase(s);}
 }
 function acdLoadActiveChallengeState(){
   const s=acdGetStore();
@@ -110,6 +172,7 @@ function acdClearActiveChallengeState(){
   const s=acdGetStore();
   delete s.activeChallengeState;
   acdSetStore(s);
+  if(acdFirebaseReady){acdSetStoreToFirebase(s);}
 }
 
 function acdCheckCooldown(){
@@ -119,6 +182,7 @@ function acdCheckCooldown(){
   delete s.cooldownUntil;
   delete s.nightmareCount;
   acdSetStore(s);
+  if(acdFirebaseReady){acdSetStoreToFirebase(s);}
   return false;
 }
 
@@ -129,6 +193,7 @@ function acdRecordNightmare(){
     s.cooldownUntil=Date.now()+COOLDOWN_MS;
   }
   acdSetStore(s);
+  if(acdFirebaseReady){acdSetStoreToFirebase(s);}
   return s.cooldownUntil||null;
 }
 
@@ -178,6 +243,15 @@ function acdInitDOM(){
   
   acdLoadSuspicionCount();
   
+  acdGetUserIP().then(ip=>{
+    if(ip&&window.firebaseInitialized&&window.firebaseDB){
+      acdFirebaseReady=true;
+      acdLoadSuspicionCountFromFirebase().then(loaded=>{
+        if(!loaded)acdSaveSuspicionCountToFirebase();
+      });
+    }
+  });
+  
   const s=acdGetStore();
   if(s.cooldownUntil&&Date.now()<s.cooldownUntil){
     acdDisableAllButtons(true);
@@ -212,9 +286,11 @@ function acdInitDOM(){
     const enough=ivs.length>=MIN_CLICKS-1;
     const avg=enough?acdMean(ivs):null;
     const sd=enough?acdStd(ivs):null;
+    const cv=enough?acdCV(ivs):null;
     const suspStd=enough&&sd<STD_THRESHOLD;
-    const is50=enough&&avg>=INT_50[0]&&avg<=INT_50[1]&&suspStd;
-    const is100=enough&&avg>=INT_100[0]&&avg<=INT_100[1]&&suspStd;
+    const suspCV=enough&&cv<CV_THRESHOLD;
+    const is50=enough&&avg>=INT_50[0]&&avg<=INT_50[1]&&(suspStd||suspCV);
+    const is100=enough&&avg>=INT_100[0]&&avg<=INT_100[1]&&(suspStd||suspCV);
     const susRate=w3.length/(WINDOW/1000);
     const isSus=susRate>=SUSTAINED_CPS&&w3.length>=MIN_CLICKS;
 
@@ -240,6 +316,7 @@ if(document.readyState==='loading'){
 
 function acdMean(a){return a.reduce((s,v)=>s+v,0)/a.length;}
 function acdStd(a){const m=acdMean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/a.length);}
+function acdCV(a){const m=acdMean(a);return m>0?acdStd(a)/m:Infinity;}
 function acdIntervals(ts){const r=[];for(let i=1;i<ts.length;i++)r.push(ts[i]-ts[i-1]);return r;}
 
 function acdComputeTier(){
