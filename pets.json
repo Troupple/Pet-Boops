@@ -7,5 +7,6 @@
   {"name":"Aspen", "image":"Pets/Aspen.png", "nose": {"x": 48.7, "y":60.2}},
   {"name":"Lola Bunny", "image":"Pets/Lola_Bunny.png", "nose": {"x": 46.1, "y":67.3}},
   {"name":"Charlie", "image":"Pets/Charlie.png", "nose": {"x": 46.1, "y":24.7}},
-  {"name":"Cleaner Fishy", "image":"Pets/Cleaner_Fishy.png", "nose": {"x": 46.6, "y":21}}
+  {"name":"Cleaner Fishy", "image":"Pets/Cleaner_Fishy.png", "nose": {"x": 46.6, "y":21}},
+  {"name":"Lucie", "image":"Pets/Lucie.png", "nose": {"x": 28, "y":25.6}}
 ]
