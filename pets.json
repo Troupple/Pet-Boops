@@ -8,5 +8,8 @@
   {"name":"Lola Bunny", "image":"Pets/Lola_Bunny.png", "nose": {"x": 46.1, "y":67.3}},
   {"name":"Charlie", "image":"Pets/Charlie.png", "nose": {"x": 46.1, "y":24.7}},
   {"name":"Cleaner Fishy", "image":"Pets/Cleaner_Fishy.png", "nose": {"x": 46.6, "y":21}},
-  {"name":"Lucie", "image":"Pets/Lucie.png", "nose": {"x": 28, "y":25.6}}
+  {"name":"Lucie", "image":"Pets/Lucie.png", "nose": {"x": 28, "y":25.6}},
+  {"name":"Licorice", "image":"Pets/Licorice.png", "nose": {"x": 48, "y": 35.9}},
+  {"name":"Ziva", "image":"Pets/Ziva.png", "nose": {"x": 48.7, "y": 84.5}},
+  {"name":"Chuck", "image":"Pets/Chuck.png", "nose": {"x": 56.3, "y": 90.9}}
 ]

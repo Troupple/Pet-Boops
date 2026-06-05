@@ -108,6 +108,37 @@ function acdGetFirebaseKey(){
   return 'acd_state_'+acdUserIP;
 }
 
+function acdEncodeIP(ip){
+  return ip.replace(/\./g,'_');
+}
+
+async function acdCheckIfIPBanned(){
+  if(!acdFirebaseReady||!window.firebaseDB||!acdUserIP)return false;
+  try{
+    const encodedIP=acdEncodeIP(acdUserIP);
+    const ref=window.firebaseDB.ref('banned_ips/'+encodedIP);
+    const snapshot=await ref.get();
+    return snapshot.exists();
+  }catch{
+    return false;
+  }
+}
+
+async function acdAddIPToBanned(){
+  if(!acdFirebaseReady||!window.firebaseDB||!acdUserIP)return false;
+  try{
+    const encodedIP=acdEncodeIP(acdUserIP);
+    const ref=window.firebaseDB.ref('banned_ips/'+encodedIP);
+    console.log('Setting ban for IP:', acdUserIP, 'Encoded as:', encodedIP);
+    await ref.set({bannedAt:Date.now(), reason:'nightmare_limit', originalIP:acdUserIP});
+    console.log('Successfully set IP ban to Firebase');
+    return true;
+  }catch(err){
+    console.error('Error banning IP:', err);
+    return false;
+  }
+}
+
 async function acdGetStoreFromFirebase(){
   if(!acdFirebaseReady||!window.firebaseDB||!acdUserIP)return null;
   try{
@@ -191,6 +222,9 @@ function acdRecordNightmare(){
   s.nightmareCount=(s.nightmareCount||0)+1;
   if(s.nightmareCount>=NIGHTMARE_LIMIT){
     s.cooldownUntil=Date.now()+COOLDOWN_MS;
+    if(acdFirebaseReady){
+      acdAddIPToBanned();
+    }
   }
   acdSetStore(s);
   if(acdFirebaseReady){acdSetStoreToFirebase(s);}
@@ -221,6 +255,15 @@ function acdShowCooldownScreen(until){
   tick();
 }
 
+function acdShowPermanentBanScreen(){
+  acdDisableAllButtons(true);
+  acdCdScreen.classList.add('show');
+  document.getElementById('cd-badge').textContent='BAN SYSTEM';
+  document.getElementById('cd-title').textContent='Access Denied';
+  acdCdTimer.textContent='BANNED';
+  document.getElementById('cd-sub').innerHTML='Your IP address has been<br>permanently banned for auto-clicking. If you believe this to be a mistake appeal at pets@jambles.fun';
+}
+
 let acdCwEl, acdWarnEl, acdMathBox, acdMathQ, acdMathInput, acdMathHint, acdMathAttemptEl, acdMathSubmit, acdSbEl, acdUhEl, acdReasonBadge, acdChallengeWrapper, acdCdScreen, acdCdTimer;
 let acdDetectionInterval;
 let acdDOMGuardInterval;
@@ -243,9 +286,15 @@ function acdInitDOM(){
   
   acdLoadSuspicionCount();
   
-  acdGetUserIP().then(ip=>{
+  acdGetUserIP().then(async ip=>{
     if(ip&&window.firebaseInitialized&&window.firebaseDB){
       acdFirebaseReady=true;
+      const isBanned=await acdCheckIfIPBanned();
+      if(isBanned){
+        acdDisableAllButtons(true);
+        acdShowPermanentBanScreen();
+        return;
+      }
       acdLoadSuspicionCountFromFirebase().then(loaded=>{
         if(!loaded)acdSaveSuspicionCountToFirebase();
       });
@@ -552,7 +601,35 @@ function acdDisableAllButtons(disabled = true) {
   });
 }
 
+async function addIPBanFire(){
+  console.log('Testing IP ban...');
+  console.log('Firebase Status:');
+  console.log('  window.firebaseInitialized:', window.firebaseInitialized);
+  console.log('  window.firebaseDB:', !!window.firebaseDB);
+  console.log('  acdFirebaseReady:', acdFirebaseReady);
+  console.log('  acdUserIP:', acdUserIP);
+  console.log('  window._x:', window._x);
+  console.log('  window._k:', !!window._k);
+  
+  if(!window.firebaseDB){
+    console.error('ERROR: window.firebaseDB is not initialized!');
+    return;
+  }
+  
+  const result=await acdAddIPToBanned();
+  console.log('IP ban result:',result);
+  if(result){
+    acdShowPermanentBanScreen();
+    console.log('Ban screen shown');
+  } else {
+    console.log('Failed to ban IP');
+  }
+}
+
 window.acdTrackClick = acdTrackClick;
 window.acdDisableAllButtons = acdDisableAllButtons;
 window.acdCheckCooldown = acdCheckCooldown;
 window.acdIsBlocked = () => acdLocked || acdCheckCooldown();
+window.acdCheckIfIPBanned = acdCheckIfIPBanned;
+window.acdAddIPToBanned = acdAddIPToBanned;
+window.addIPBanFire = addIPBanFire;
