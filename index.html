@@ -136,7 +136,10 @@ h1 {
   .pet-banner img { 
     width: 10px !important; 
     height: 10px !important; 
-  } 
+  }
+  .title-controls {
+    margin-bottom: 160px;
+  }
 }
 @media (min-width: 501px) { .pet-card { margin-left: 0; max-width: 270px; } }
 
@@ -738,6 +741,106 @@ h1 {
 .footer-separator {
   opacity: 0.2;
 }
+
+.side-donate-banner {
+  position: absolute;
+  top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  text-decoration: none;
+  border: 1.5px solid var(--line);
+  background: var(--yellow);
+  box-shadow: var(--shadow);
+  padding: 5px;
+}
+
+.left-donate {
+  left: 40px;
+}
+
+.right-donate {
+  right: 40px;
+}
+
+.side-donate-banner:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.side-donate-banner:active {
+  transform: scale(0.98);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.side-donate-icon {
+  height: auto;
+  width: 380px;
+  max-width: 90vw;
+  display: block;
+  cursor: pointer;
+}
+
+@media (max-width: 1200px) {
+  .side-donate-icon {
+    width: 270px;
+  }
+}
+
+@media (max-width: 768px) {
+  .side-donate-icon {
+    width: 210px;
+  }
+}
+
+@media (max-width: 500px) {
+  .left-donate {
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: auto;
+    top: 390px;
+  }
+  
+  .right-donate {
+    display: none;
+  }
+  
+  .side-donate-icon {
+    width: 300px;
+  }
+}
+
+.footer-donate-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  border: 1.5px solid var(--line);
+  background: var(--yellow);
+  box-shadow: var(--shadow);
+  padding: 6px;
+}
+
+.footer-donate-link:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.footer-donate-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.footer-donate-icon {
+  height: auto;
+  max-width: 250px;
+  max-height: 250px;
+  display: block;
+  cursor: pointer;
+}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -776,11 +879,19 @@ h1 {
 
 <div id="reason-badge">AUTO-CLICKER DETECTED</div>
 
+<a href="https://linktr.ee/jamblesfun" target="_blank" class="side-donate-banner left-donate">
+  <img src="Donate.png" alt="Donate" class="side-donate-icon">
+</a>
+
+<a href="https://linktr.ee/jamblesfun" target="_blank" class="side-donate-banner right-donate">
+  <img src="Donate.png" alt="Donate" class="side-donate-icon">
+</a>
+
 <div class="wrapper">
 
   <img src="SVG/PetBoops.svg" alt="Pet Boops" style="height: auto; max-width: 400px; display: block; margin: 12 auto 40px; justify-self: center; padding-bottom: 2px;">
-      <div class="subtitle">Click on a pet's nose to raise their Boop count. <br>
-        Whoever has the highest Boops at the end of the month <br> gets a place in the Hall of Fame.</div>
+  <div class="subtitle">Click on a pet's nose to raise their Boop count. <br>
+    Whoever has the highest Boops at the end of the month <br> gets a place in the Hall of Fame.</div>
   <div class="title-controls">
     <a class="top-button" href="submit.html">Submit Pet</a>
     <a class="top-button alt" href="hall-of-fame.html">Hall of Fame</a>
@@ -820,6 +931,12 @@ h1 {
     <a href="mailto:Hi@jambles.fun" class="footer-link">Support</a>
     <span class="footer-separator">|</span>
     <a href="mailto:Bugs@jambles.fun" class="footer-link">Report a Bug</a>
+  </div>
+
+  <div class="page-footer" style="border-top: none; margin-top: 24px;">
+    <a href="https://linktr.ee/jamblesfun" target="_blank" class="footer-donate-link">
+      <img src="Donate.png" alt="Donate" class="footer-donate-icon">
+    </a>
   </div>
 
 </div>
